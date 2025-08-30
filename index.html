@@ -204,33 +204,33 @@ button:hover {
 <script>
 /* === Original JS Code === */
 const bosses = [
-  // Respawn bosses (oras ng pagkamatay + interval)
-  { name:'Lady Dalia', respawn:18*60*60, nextSpawn:'03:20 AM' },   // Wed, Aug 27, 2025 – 03:20 AM (PH)
-  { name:'Venatus A', respawn:10*60*60, nextSpawn:'05:45 AM' },    // Wed, Aug 27, 2025 – 05:45 AM (PH)
-  { name:'EGO', respawn:21*60*60, nextSpawn:'02:13 PM' },          // Wed, Aug 27, 2025 – 02:13 PM (PH)
-  { name:'Venatus B', respawn:10*60*60, nextSpawn:'07:09 AM' },    // Fri, Aug 29, 2025 – 07:09 AM (PH)
-  { name:'Livera', respawn:24*60*60, nextSpawn:'11:30 AM' },       // Fri, Aug 29, 2025 – 11:30 AM (PH)
-  { name:'Araneo (24h)', respawn:24*60*60, nextSpawn:'11:50 AM' }, // Fri, Aug 29, 2025 – 11:50 AM (PH)
-  { name:'Araneo (21h)', respawn:21*60*60, nextSpawn:'08:15 AM' }, // Fri, Aug 29, 2025 – 08:15 AM (PH)
-
-  // Weekly fixed spawns
-  { name:'Thymele', special:true, schedule:[
-      {day:1,hour:19,minute:0},   // Monday 19:00
-      {day:3,hour:11,minute:30}   // Wednesday 11:30
-  ]},
-  { name:'Clemantis', special:true, schedule:[
-      {day:1,hour:11,minute:30},  // Monday 11:30
-      {day:4,hour:19,minute:0}    // Thursday 19:00
-  ]},
-  { name:'Neutro', special:true, schedule:[
-      {day:2,hour:19,minute:0},   // Tuesday 19:00
-      {day:4,hour:11,minute:30}   // Thursday 11:30
-  ]},
-  { name:'Ringor', special:true, schedule:[
-      {day:6,hour:17,minute:0}    // Saturday 17:00
-  ]}
+  { name:'Undomiel', respawn:24*60*60, nextSpawn:'12:05 AM' },
+  { name:'Lady Daliah', respawn:18*60*60, nextSpawn:'10:03 PM' },
+  { name:'Venatus', respawn:10*60*60 },
+  { name:'Viorent', respawn:10*60*60 },
+  { name:'Ego', respawn:21*60*60, nextSpawn:'10:49 AM' },
+  { name:'Thymele', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+  { name:'Araneo', respawn:24*60*60, nextSpawn:'11:06 PM' },
+  { name:'Livera', respawn:24*60*60, nextSpawn:'11:16 PM' },
+  { name:'Clemantis', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+  { name:'Saphirus', special:true, schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+  { name:'Neutro', special:true, schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+  { name:'General Aquleus', respawn:29*60*60 },
+  { name:'Amentis', respawn:29*60*60 },
+  { name:'Baron Braudmore', respawn:32*60*60 },
+  { name:'Milavy', special:true, schedule:[{day:6,hour:15,minute:0}] },
+  { name:'Wannitas', respawn:48*60*60 },
+  { name:'Metus', respawn:48*60*60 },
+  { name:'Duplican', respawn:48*60*60 },
+  { name:'Shuliar', respawn:35*60*60 },
+  { name:'Ringor', special:true, schedule:[{day:6,hour:17,minute:0}] },
+  { name:'Roderick', special:true, schedule:[{day:5,hour:19,minute:0}] },
+  { name:'Gareth', respawn:32*60*60 },
+  { name:'Titore', respawn:37*60*60 },
+  { name:'Larba', respawn:35*60*60 },
+  { name:'Catena', respawn:35*60*60 },
+  { name:'Auraq', special:true, schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
 ];
-
 
 function nameToId(n){ return ('b-' + n.toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')); }
 function getBossById(id){ return bosses.find(b => nameToId(b.name) === id); }
