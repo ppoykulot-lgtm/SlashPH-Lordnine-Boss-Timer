@@ -45,7 +45,9 @@
       flex-direction: column;
       justify-content: space-between;
       transition: transform 0.3s, box-shadow 0.3s;
-      overflow: hidden;
+      background-size: 40% auto;
+      background-repeat: no-repeat;
+      background-position: right center;
     }
     .boss:hover {
       transform: translateY(-5px);
@@ -60,14 +62,12 @@
       font-size: 1.2rem;
       margin-bottom: 10px;
       color: #ffcc00;
-      z-index: 2;
     }
     .timer {
       font-size: 1.4rem;
       font-weight: bold;
       margin-bottom: 8px;
       color: #00ffcc;
-      z-index: 2;
     }
     .timer.spawned {
       color: #00ff00;
@@ -79,37 +79,17 @@
     .next-time {
       font-size: 0.9rem;
       color: #aaa;
-      z-index: 2;
     }
 
-    /* interval badge */
+    /* interval text upper right */
     .boss .intervals {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(0, 255, 153, 0.15);
-      border: 1px solid #00ff99;
-      color: #00ff99;
-      font-size: 0.8rem;
+      color: red;            /* 🔴 red text */
+      font-size: 0.9rem;
       font-weight: bold;
-      padding: 3px 7px;
-      border-radius: 8px;
       z-index: 3;
-    }
-
-    /* background image */
-    .boss::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 40%;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center right;
-      opacity: 0.25;
-      z-index: 1;
     }
 
     @keyframes flash {
@@ -187,13 +167,16 @@
 
     function updateTimers(){
       const now = new Date();
+
       bosses.forEach(b => {
         b.nextSpawn = computeNextSpawn(b.lastKilled, b.intervals);
       });
+
       bosses.sort((a,b) => a.nextSpawn - b.nextSpawn);
 
       const grid = document.getElementById('boss-grid');
       grid.innerHTML = '';
+
       let soonestBoss = bosses[0];
 
       bosses.forEach(b => {
@@ -202,14 +185,13 @@
         const card = document.createElement('div');
         card.className = 'boss';
         card.id = `card-${id}`;
+        card.style.backgroundImage = `url('SlashPH-Lordnine-Boss-Timer/${b.name}.png')`;
         card.innerHTML = `
           <div class="intervals">${b.intervals.join("h, ")}h</div>
           <h2>${b.name}</h2>
           <div id="timer-${id}" class="timer">${formatTime(remaining)}</div>
           <div id="next-${id}" class="next-time">Next: ${formatDateTime(b.nextSpawn)}</div>
         `;
-        card.style.setProperty("--img", `url('SlashPH-Lordnine-Boss-Timer/${b.name}.png')`);
-        card.style.setProperty("background-image", "var(--img)");
         if(b === soonestBoss) card.classList.add('highlight');
         grid.appendChild(card);
 
@@ -234,13 +216,13 @@
         const card=document.createElement('div');
         card.className='boss';
         card.id=`card-${id}`;
+        card.style.backgroundImage = `url('SlashPH-Lordnine-Boss-Timer/${b.name}.png')`;
         card.innerHTML=`
           <div class="intervals">${b.intervals.join("h, ")}h</div>
           <h2>${b.name}</h2>
           <div id="timer-${id}" class="timer">Loading...</div>
           <div id="next-${id}" class="next-time">Next: Calculating...</div>
         `;
-        card.style.setProperty("--img", `url('SlashPH-Lordnine-Boss-Timer/${b.name}.png')`);
         grid.appendChild(card);
       });
     }
