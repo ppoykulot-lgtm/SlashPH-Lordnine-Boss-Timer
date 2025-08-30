@@ -4,109 +4,135 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SlashPH Lordnine Boss Timers</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 /* ---------- Global Styles ---------- */
 body {
-  background: radial-gradient(circle at top, #0f0f12, #080809);
   margin: 0;
   padding: 0;
-  font-family: 'Cinzel', serif;
-  color: #d4af37;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #050510 0%, #0a0a1f 50%, #050510 100%);
+  color: #eee;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ---------- Header ---------- */
 header {
   text-align: center;
   margin: 40px 0 20px;
+  position: relative;
 }
 header h1 {
-  font-size: 46px;
-  color: #ffd700;
+  font-size: 48px;
+  background: linear-gradient(90deg, #0ff, #ff0, #f0f);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  margin: 0;
-  text-shadow: 0 0 12px rgba(255,215,0,.6), 0 0 20px rgba(255,215,0,.4);
-  animation: glow 3s ease-in-out infinite alternate;
+  animation: hueRotate 6s linear infinite;
 }
 header h2 {
   font-size: 20px;
-  color: #c9a34e;
-  letter-spacing: 4px;
-  margin-top: 8px;
-  font-weight: normal;
+  color: #aaa;
+  letter-spacing: 6px;
+  margin-top: 6px;
+  font-weight: 500;
 }
-@keyframes glow {
-  from { text-shadow: 0 0 8px #d4af37; }
-  to { text-shadow: 0 0 20px #ffd700, 0 0 40px #b8860b; }
+@keyframes hueRotate {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
 }
 
 /* ---------- Next Boss Banner ---------- */
 #next-banner {
   font-size: 20px;
-  background: rgba(255,215,0,0.1);
-  color: #ffd700;
-  padding: 10px 20px;
-  margin: 15px 0 30px;
-  border-radius: 12px;
-  border: 1px solid #ffd700;
+  color: #0ff;
+  padding: 12px 28px;
+  margin: 20px 0 40px;
+  border-radius: 14px;
+  border: 2px solid #0ff;
   text-transform: uppercase;
-  text-shadow: 0 0 10px #ffd700;
-  animation: glow 1.5s ease-in-out infinite alternate;
+  text-shadow: 0 0 12px #0ff, 0 0 25px #0ff;
+  animation: pulseGlow 2s ease-in-out infinite alternate;
+}
+@keyframes pulseGlow {
+  from { box-shadow: 0 0 8px #0ff; }
+  to { box-shadow: 0 0 25px #0ff, 0 0 50px #0ff; }
 }
 
 /* ---------- Boss Container ---------- */
 .boss-container {
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-  gap: 24px;
+  gap: 26px;
   width: 95%;
-  max-width: 1300px;
+  max-width: 1400px;
   padding: 20px;
   box-sizing: border-box;
 }
 
 /* ---------- Boss Card ---------- */
 .boss {
-  background: rgba(20, 20, 25, 0.8);
-  border: 1px solid #333;
+  background: rgba(20,20,35,0.9);
+  border: 1px solid rgba(0,255,255,.4);
   padding: 20px;
-  border-radius: 16px;
+  border-radius: 18px;
   text-align: center;
-  box-shadow: 0 0 15px rgba(212,175,55,.25);
+  box-shadow: 0 0 20px rgba(0,255,255,.25);
   backdrop-filter: blur(6px);
-  transition: transform .25s ease, box-shadow .3s ease;
+  transition: transform .3s ease, box-shadow .3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.boss::before {
+  content:"";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 180deg, transparent, rgba(0,255,255,0.3), transparent 30%);
+  animation: spin 6s linear infinite;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
 }
 .boss:hover {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 0 25px rgba(212,175,55,.6);
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 0 0 35px rgba(0,255,255,.6);
 }
 
 /* ---------- Highlighting ---------- */
-.boss.highlight { border:2px solid #ffd700; box-shadow:0 0 25px #ffd700; }
-.boss.upcoming { border:2px dashed #00ffff; box-shadow:0 0 25px #00ffff; }
-.boss.manual   { border:2px solid #00ff7f !important; box-shadow:0 0 25px #00ff7f !important; }
+.boss.highlight { border:2px solid #ff0; box-shadow:0 0 30px #ff0; }
+.boss.upcoming { border:2px dashed #f0f; box-shadow:0 0 30px #f0f; }
+.boss.manual   { border:2px solid #0f0 !important; box-shadow:0 0 30px #0f0 !important; }
 
 /* ---------- Text Styles ---------- */
 .boss h3 {
   margin: 0 0 12px;
   font-size: 22px;
-  color: #f4e1b1;
+  color: #0ff;
   letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
 }
 .timer {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 28px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 30px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: #fff;
+  text-shadow: 0 0 12px #0ff;
+  position: relative;
+  z-index: 1;
 }
-.next { font-size: 15px; color: #bbb; margin-bottom: 14px; }
-.reminder { font-size: 12px; color: #888; margin-bottom: 12px; }
+.next { font-size: 15px; color: #ccc; margin-bottom: 14px; z-index: 1; position: relative; }
+.reminder { font-size: 12px; color: #666; margin-bottom: 12px; z-index: 1; position: relative; }
 
 /* ---------- Inputs & Controls ---------- */
 .manual-entry {
@@ -115,10 +141,12 @@ header h2 {
   gap: 8px;
   margin-bottom: 12px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 .manual-entry input {
-  background: #1a1a1d;
-  border: 1px solid #d4af37;
+  background: #0a0a14;
+  border: 1px solid #0ff;
   color: #fff;
   padding: 6px 8px;
   border-radius: 6px;
@@ -131,13 +159,15 @@ header h2 {
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 /* ---------- Buttons ---------- */
 button {
-  background: linear-gradient(145deg, #1a1a1d, #111);
-  border: 1px solid #d4af37;
-  color: #d4af37;
+  background: linear-gradient(145deg, #0a0a14, #111122);
+  border: 1px solid #0ff;
+  color: #0ff;
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 13px;
@@ -145,16 +175,16 @@ button {
   transition: .25s ease;
 }
 button:hover {
-  background: linear-gradient(145deg, #ffd700, #c9a34e);
+  background: linear-gradient(145deg, #0ff, #0aa);
   color: #111;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 0 12px rgba(255,215,0,.5);
+  box-shadow: 0 0 15px #0ff;
 }
-.reset-btn { margin-bottom: 15px; }
+.reset-btn { margin-bottom: 20px; }
 
 /* ---------- Status Colors ---------- */
-.spawned { color: #00ff7f; }
-.alert   { color: #ff4500; }
+.spawned { color: #0f0; text-shadow:0 0 10px #0f0; }
+.alert   { color: #ff0080; text-shadow:0 0 10px #ff0080; }
 </style>
 </head>
 <body>
@@ -165,13 +195,14 @@ button:hover {
 </header>
 
 <div class="reset-btn">
-  <button onclick="resetAll()">Reset All Timers</button>
+  <button onclick="resetAll()">RESET ALL TIMERS</button>
 </div>
 
 <div id="next-banner">Next Boss: Calculating...</div>
 <div class="boss-container" id="bossContainer"></div>
 
 <script>
+/* === Original JS Code === */
 const bosses = [
   { name:'Undomiel', respawn:24*60*60, nextSpawn:'12:05 AM' },
   { name:'Lady Daliah', respawn:18*60*60, nextSpawn:'10:03 PM' },
