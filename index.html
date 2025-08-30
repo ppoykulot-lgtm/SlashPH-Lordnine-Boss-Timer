@@ -1,284 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SlashPH Lordnine Boss Timers</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
-/* (same CSS as before, di ko ginalaw) */
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SlashPH Lordnine Boss Timers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #0f0f0f, #1c1c1c);
+      font-family: 'Roboto Mono', monospace;
+      color: #e4e4e4;
+    }
+    header {
+      padding: 20px;
+      text-align: center;
+      background: #111;
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: #f5f5f5;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #333;
+    }
+    #next-banner {
+      text-align: center;
+      font-size: 1.3rem;
+      margin: 15px;
+      color: #00ff99;
+      font-weight: bold;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    .boss {
+      background: #1f1f1f;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .boss:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+    }
+    .boss.highlight {
+      border: 2px solid #00ffcc;
+      background: #262626;
+    }
+    .boss h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #ffcc00;
+    }
+    .timer {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #00ffcc;
+    }
+    .timer.alert {
+      color: #ff4444;
+    }
+    .timer.spawned {
+      color: #00ff00;
+    }
+    .next-time {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+  </style>
 </head>
 <body>
+  <header>SlashPH Lordnine Boss Timers</header>
+  <div id="next-banner">Next Boss: Loading...</div>
+  <div class="grid" id="boss-grid"></div>
 
-<header>
-  <h1>SlashPH Lordnine</h1>
-  <h2>BOSS TIMERS</h2>
-</header>
+  <script>
+    const bosses = [
+      { name:'Undomiel', respawn:24*60*60, nextSpawn:'12:05 AM' },
+      { name:'Lady Daliah', respawn:18*60*60, nextSpawn:'10:03 PM' },
+      { name:'Venatus', respawn:10*60*60 },
+      { name:'Viorent', respawn:10*60*60 },
+      { name:'Ego', respawn:21*60*60, nextSpawn:'10:49 AM' },
+      { name:'Thymele', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+      { name:'Araneo', respawn:24*60*60, nextSpawn:'11:06 PM' },
+      { name:'Livera', respawn:24*60*60, nextSpawn:'11:16 PM' },
+      { name:'Clemantis', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+      { name:'Saphirus', special:true, schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+      { name:'Neutro', special:true, schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+      { name:'General Aquleus', respawn:29*60*60 },
+      { name:'Amentis', respawn:29*60*60 },
+      { name:'Baron Braudmore', respawn:32*60*60 },
+      { name:'Milavy', special:true, schedule:[{day:6,hour:15,minute:0}] },
+      { name:'Wannitas', respawn:48*60*60 },
+      { name:'Metus', respawn:48*60*60 },
+      { name:'Duplican', respawn:48*60*60 },
+      { name:'Shuliar', respawn:35*60*60 },
+      { name:'Ringor', special:true, schedule:[{day:6,hour:17,minute:0}] },
+      { name:'Roderick', special:true, schedule:[{day:5,hour:19,minute:0}] },
+      { name:'Gareth', respawn:32*60*60 },
+      { name:'Titore', respawn:37*60*60 },
+      { name:'Larba', respawn:35*60*60 },
+      { name:'Catena', respawn:35*60*60 },
+      { name:'Auraq', special:true, schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
+    ];
 
-<div class="reset-btn">
-  <button onclick="resetAll()">RESET ALL TIMERS</button>
-</div>
-
-<div id="next-banner">Next Boss: Calculating...</div>
-<div class="boss-container" id="bossContainer"></div>
-
-<script>
-/* === Boss List === */
-const bosses = [
-  { name:'Undomiel', respawn:24*60*60, nextSpawn:'12:05 AM' },
-  { name:'Lady Daliah', respawn:18*60*60, nextSpawn:'10:03 PM' },
-  { name:'Venatus', respawn:10*60*60 },
-  { name:'Viorent', respawn:10*60*60 },
-  { name:'Ego', respawn:21*60*60, nextSpawn:'10:49 AM' },
-  { name:'Thymele', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
-  { name:'Araneo', respawn:24*60*60, nextSpawn:'11:06 PM' },
-  { name:'Livera', respawn:24*60*60, nextSpawn:'11:16 PM' },
-  { name:'Clemantis', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
-  { name:'Saphirus', special:true, schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
-  { name:'Neutro', special:true, schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
-  { name:'General Aquleus', respawn:29*60*60 },
-  { name:'Amentis', respawn:29*60*60 },
-  { name:'Baron Braudmore', respawn:32*60*60 },
-  { name:'Milavy', special:true, schedule:[{day:6,hour:15,minute:0}] },
-  { name:'Wannitas', respawn:48*60*60 },
-  { name:'Metus', respawn:48*60*60 },
-  { name:'Duplican', respawn:48*60*60 },
-  { name:'Shuliar', respawn:35*60*60 },
-  { name:'Ringor', special:true, schedule:[{day:6,hour:17,minute:0}] },
-  { name:'Roderick', special:true, schedule:[{day:5,hour:19,minute:0}] },
-  { name:'Gareth', respawn:32*60*60 },
-  { name:'Titore', respawn:37*60*60 },
-  { name:'Larba', respawn:35*60*60 },
-  { name:'Catena', respawn:35*60*60 },
-  { name:'Auraq', special:true, schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
-];
-
-/* === Helpers === */
-function nameToId(n){ return ('b-' + n.toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')); }
-function getBossById(id){ return bosses.find(b => nameToId(b.name) === id); }
-
-function parseTime(str){
-  const now = new Date();
-  let [time, ampm] = str.split(' ');
-  let [h,m] = time.split(':').map(Number);
-  if(ampm && ampm.toLowerCase()==='pm' && h<12) h+=12;
-  if(ampm && ampm.toLowerCase()==='am' && h===12) h=0;
-  const dt = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
-  if(dt < now) dt.setDate(dt.getDate()+1);
-  return dt;
-}
-
-function formatTime(ms){
-  if(ms<=0) return 'SPAWNED!';
-  const s=Math.floor(ms/1000);
-  const h=Math.floor(s/3600);
-  const m=Math.floor((s%3600)/60);
-  const sec=s%60;
-  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-}
-
-function getNextScheduled(schedule, fromTime=new Date()){
-  let soonest=null;
-  schedule.forEach(s=>{
-    let next=new Date(fromTime);
-    const diffDay=(s.day - fromTime.getDay() + 7)%7;
-    next.setDate(fromTime.getDate()+diffDay);
-    next.setHours(s.hour,s.minute,0,0);
-    if(next<=fromTime) next.setDate(next.getDate()+7);
-    if(!soonest || next < soonest) soonest = next;
-  });
-  return soonest;
-}
-
-/* New: format PH + KR times */
-function formatSpawnDual(date){
-  const opts = { hour:'2-digit', minute:'2-digit', hour12:true, weekday:'short', month:'short', day:'numeric' };
-  const ph = date.toLocaleString("en-US", {...opts, timeZone:"Asia/Manila"});
-  const kr = date.toLocaleString("en-US", {...opts, timeZone:"Asia/Tokyo"});
-  return `PH: ${ph} | KR/JP: ${kr}`;
-}
-
-/* === Save/Load === */
-function saveTimers() {
-  const data = {};
-  bosses.forEach(b => {
-    data[nameToId(b.name)] = b.nextSpawn.getTime();
-  });
-  localStorage.setItem('bossTimers', JSON.stringify(data));
-}
-
-function loadTimers() {
-  const data = JSON.parse(localStorage.getItem('bossTimers') || '{}');
-  bosses.forEach(b => {
-    const id = nameToId(b.name);
-    if(data[id]){
-      b.nextSpawn = new Date(data[id]);
+    function nameToId(name){
+      return name.toLowerCase().replace(/\s+/g,'-');
     }
-  });
-}
-
-/* === UI === */
-function createUI(){
-  const container=document.getElementById('bossContainer');
-  bosses.forEach(b=>{
-    const id=nameToId(b.name);
-    if(b.special && !b.nextSpawn){
-      b.nextSpawn=getNextScheduled(b.schedule);
-    } else if(typeof b.nextSpawn==='string'){
-      b.nextSpawn=parseTime(b.nextSpawn);
-    } else if(!b.nextSpawn){
-      b.nextSpawn=new Date(new Date().getTime()+b.respawn*1000);
+    function formatTime(ms){
+      if(ms<=0) return "SPAWNED!";
+      let s=Math.floor(ms/1000);
+      const d=Math.floor(s/86400); s%=86400;
+      const h=Math.floor(s/3600); s%=3600;
+      const m=Math.floor(s/60); s%=60;
+      return (d>0?d+"d ":"")+(h>0?h+"h ":"")+(m>0?m+"m ":"")+s+"s";
     }
-    const div=document.createElement('div');
-    div.className='boss';
-    div.id=`card-${id}`;
-    div.innerHTML=`
-      <h3>${b.name}</h3>
-      <div class="timer" id="timer-${id}"></div>
-      <div class="next" id="next-${id}"></div>
-      <div class="reminder">Set a kill time or input next spawn</div>
-      <div class="manual-entry">
-        <input type="time" id="killTime-${id}" step="60" aria-label="Kill time for ${b.name}">
-        <input type="datetime-local" id="nextSpawn-${id}" aria-label="Next spawn for ${b.name}">
-      </div>
-      <div class="controls">
-        <button onclick="killedNow('${id}')">Killed Now</button>
-        <button onclick="manualEntry('${id}')">Set Manual Kill Time</button>
-        <button onclick="setNextSpawn('${id}')">Set Next Spawn</button>
-      </div>
-    `;
-    container.appendChild(div);
-  });
-}
-
-/* === Timer Update === */
-function updateTimers(){
-  const now=new Date();
-  let soonestBoss=null;
-  const ALERT_THRESHOLD_MINUTES = 30;
-  const threshold = ALERT_THRESHOLD_MINUTES * 60 * 1000;
-
-  bosses.forEach(b=>{
-    let next=b.nextSpawn;
-    let diff=next-now;
-
-    if(diff<=0){
-      if(b.special && b.schedule){
-        b.nextSpawn=getNextScheduled(b.schedule, now);
-      } else if(b.respawn){
-        b.nextSpawn=new Date(now.getTime()+b.respawn*1000);
+    function formatDateTime(dt){
+      if(!(dt instanceof Date)) return '';
+      const opts = { hour:'2-digit', minute:'2-digit' };
+      const ph = dt.toLocaleTimeString([], opts);
+      const kr = new Date(dt.getTime() + 60*60*1000).toLocaleTimeString([], opts);
+      const dateStr = dt.toLocaleDateString();
+      return `${dateStr} | PH: ${ph} | KR/JP: ${kr}`;
+    }
+    function getNextScheduled(schedule, now){
+      let soonest=null;
+      for(let i=0;i<schedule.length;i++){
+        let s=schedule[i];
+        let d=new Date(now);
+        d.setDate(now.getDate() + ((s.day+7-now.getDay())%7));
+        d.setHours(s.hour, s.minute,0,0);
+        if(d<=now) d.setDate(d.getDate()+7);
+        if(!soonest||d<soonest) soonest=d;
       }
-      next=b.nextSpawn;
-      diff=next-now;
+      return soonest;
     }
 
-    if(!soonestBoss || next<soonestBoss.nextSpawn) soonestBoss=b;
+    function updateTimers(){
+      const now=new Date();
+      let soonestBoss=null;
+      const ALERT_THRESHOLD_MINUTES=30;
+      const threshold=ALERT_THRESHOLD_MINUTES*60*1000;
 
-    const id=nameToId(b.name);
-    const timerEl=document.getElementById(`timer-${id}`);
-    const nextEl=document.getElementById(`next-${id}`);
-    const card=document.getElementById(`card-${id}`);
+      bosses.forEach(b=>{
+        let next=b.nextSpawn;
+        if(typeof next==="string"){
+          let d=new Date(now);
+          let [time,ampm]=next.split(" ");
+          let [hh,mm]=time.split(":");
+          hh=parseInt(hh); mm=parseInt(mm);
+          if(ampm==="PM" && hh!==12) hh+=12;
+          if(ampm==="AM" && hh===12) hh=0;
+          d.setHours(hh,mm,0,0);
+          if(d<=now) d.setDate(d.getDate()+1);
+          b.nextSpawn=d;
+          next=d;
+        }
+        let diff=next-now;
 
-    if(timerEl && nextEl){
-      timerEl.textContent=formatTime(diff);
-      timerEl.className='timer';
-      if(diff<=0) timerEl.classList.add('spawned');
-      else if(diff<=10*60*1000) timerEl.classList.add('alert');
+        if(diff<=0 && b.respawn){
+          while(next<=now){
+            next=new Date(next.getTime()+b.respawn*1000);
+          }
+          b.nextSpawn=next;
+          diff=next-now;
+        }
+        if(b.special && b.schedule){
+          if(diff<=0){
+            b.nextSpawn=getNextScheduled(b.schedule, now);
+            next=b.nextSpawn;
+            diff=next-now;
+          }
+        }
+        if(!soonestBoss||next<soonestBoss.nextSpawn) soonestBoss=b;
 
-      // show PH & KR time
-      nextEl.textContent = "Next: " + formatSpawnDual(next);
+        const id=nameToId(b.name);
+        const timerEl=document.getElementById(`timer-${id}`);
+        const nextEl=document.getElementById(`next-${id}`);
+        const card=document.getElementById(`card-${id}`);
+
+        if(timerEl && nextEl){
+          timerEl.textContent=formatTime(diff);
+          timerEl.className='timer';
+          if(diff<=0) timerEl.classList.add('spawned');
+          else if(diff<=10*60*1000) timerEl.classList.add('alert');
+          nextEl.textContent=`Next: ${formatDateTime(next)}`;
+        }
+        if(card){
+          card.style.order=Math.floor(diff/1000);
+          card.classList.remove('upcoming','manual');
+          if(diff>0 && diff<=threshold) card.classList.add('upcoming');
+          if(b.manual) card.classList.add('manual');
+        }
+      });
+
+      if(soonestBoss){
+        document.getElementById('next-banner').textContent=
+          `Next Boss: ${soonestBoss.name} at ${formatDateTime(soonestBoss.nextSpawn)}`;
+        document.querySelectorAll('.boss').forEach(c=>c.classList.remove('highlight'));
+        const highlightCard=document.getElementById(`card-${nameToId(soonestBoss.name)}`);
+        if(highlightCard) highlightCard.classList.add('highlight');
+      }
     }
 
-    if(card){
-      card.style.order=Math.floor(diff/1000);
-      card.classList.remove('upcoming','manual');
-      if(diff > 0 && diff <= threshold) card.classList.add('upcoming');
-      if(b.manual) card.classList.add('manual');
+    function buildGrid(){
+      const grid=document.getElementById('boss-grid');
+      bosses.forEach(b=>{
+        const id=nameToId(b.name);
+        const card=document.createElement('div');
+        card.className='boss';
+        card.id=`card-${id}`;
+        card.innerHTML=`
+          <h2>${b.name}</h2>
+          <div id="timer-${id}" class="timer">Loading...</div>
+          <div id="next-${id}" class="next-time">Next: Calculating...</div>
+        `;
+        grid.appendChild(card);
+      });
     }
-  });
 
-  if(soonestBoss){
-    document.getElementById('next-banner').textContent=`Next Boss: ${soonestBoss.name} → ${formatSpawnDual(soonestBoss.nextSpawn)}`;
-    document.querySelectorAll('.boss').forEach(c=>c.classList.remove('highlight'));
-    const highlightCard=document.getElementById(`card-${nameToId(soonestBoss.name)}`);
-    if(highlightCard) highlightCard.classList.add('highlight');
-  }
-}
-
-/* === Controls === */
-function killedNow(id){
-  const b=getBossById(id);
-  const now=new Date();
-  if(b.special && b.schedule){
-    b.nextSpawn=getNextScheduled(b.schedule, now);
-  } else if(b.respawn){
-    b.nextSpawn=new Date(now.getTime()+b.respawn*1000);
-  }
-  b.manual=false;
-  saveTimers();
-}
-
-function manualEntry(id){
-  const input = document.getElementById(`killTime-${id}`);
-  if(!input || !input.value) return;
-
-  const now = new Date();
-  const [h,m] = input.value.split(':').map(Number);
-  let killTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
-  if(killTime > now) killTime.setDate(killTime.getDate() - 1);
-
-  const b = getBossById(id);
-
-  if(b.special && b.schedule){
-    b.nextSpawn = getNextScheduled(b.schedule, killTime);
-  } else if(b.respawn){
-    b.nextSpawn = new Date(killTime.getTime() + b.respawn*1000);
-  } else {
-    b.nextSpawn = new Date(killTime.getTime());
-  }
-
-  b.manual = true;
-  saveTimers();
-}
-
-function setNextSpawn(id){
-  const input = document.getElementById(`nextSpawn-${id}`);
-  if(!input || !input.value) return;
-
-  const next = new Date(input.value);
-  if(isNaN(next.getTime())){
-    alert('Invalid date/time');
-    return;
-  }
-
-  const b = getBossById(id);
-  b.nextSpawn = next;
-  b.manual = true;
-  saveTimers();
-  updateTimers();
-}
-
-function resetAll(){
-  localStorage.removeItem('bossTimers');
-  bosses.forEach(b=>{
-    if(!b.special && b.respawn){
-      b.nextSpawn=new Date(new Date().getTime()+b.respawn*1000);
-      b.manual=false;
-    } else if(b.special && b.schedule){
-      b.nextSpawn=getNextScheduled(b.schedule);
-      b.manual=false;
-    }
-  });
-  updateTimers();
-}
-
-/* === Init === */
-createUI();
-loadTimers();
-updateTimers();
-setInterval(updateTimers, 1000);
-</script>
-
+    buildGrid();
+    setInterval(updateTimers,1000);
+    updateTimers();
+  </script>
 </body>
 </html>
