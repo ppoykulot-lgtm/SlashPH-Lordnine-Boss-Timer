@@ -84,38 +84,36 @@
 
   <script>
     const bosses = [
-  { name:'Undomiel', respawn:24*60*60, nextSpawn:'12:05 AM' },
-  { name:'Lady Daliah', respawn:18*60*60, nextSpawn:'12:25 PM' },
-  { name:'Venatus', respawn:10*60*60, nextSpawn:'11:13 PM' }, 
-  { name:'Viorent', respawn:10*60*60, nextSpawn:'11:15 PM' },
-  { name:'Ego', respawn:21*60*60, nextSpawn:'10:49 AM' },
-  { name:'Thymele', special:true, schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
-  { name:'Araneo', respawn:24*60*60, nextSpawn:'08:15 AM' },
-  { name:'Livera', respawn:24*60*60, nextSpawn:'11:30 AM' },
-  { name:'Clemantis', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
-  { name:'Saphirus', special:true, schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
-  { name:'Neutro', special:true, schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
-  { name:'General Aquleus', respawn:29*60*60, nextSpawn:'02:00 AM' },
-  { name:'Amentis', respawn:29*60*60, nextSpawn:'03:00 AM' },
-  { name:'Baron Braudmore', respawn:32*60*60, nextSpawn:'05:00 AM' },
-  { name:'Milavy', special:true, schedule:[{day:6,hour:15,minute:0}] },
-  { name:'Wannitas', respawn:48*60*60, nextSpawn:'07:00 AM' },
-  { name:'Metus', respawn:48*60*60, nextSpawn:'08:00 AM' },
-  { name:'Duplican', respawn:48*60*60, nextSpawn:'09:00 AM' },
-  { name:'Shuliar', respawn:35*60*60, nextSpawn:'10:00 AM' },
-  { name:'Ringor', special:true, schedule:[{day:6,hour:17,minute:0}] },
-  { name:'Roderick', special:true, schedule:[{day:5,hour:19,minute:0}] },
-  { name:'Gareth', respawn:32*60*60, nextSpawn:'11:00 AM' },
-  { name:'Titore', respawn:37*60*60, nextSpawn:'01:00 PM' },
-  { name:'Larba', respawn:35*60*60, nextSpawn:'02:00 PM' },
-  { name:'Catena', respawn:35*60*60, nextSpawn:'03:00 PM' },
-  { name:'Auraq', special:true, schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
-];
+      { name:'Undomiel', respawn:24*60*60, nextSpawn:'12:05 AM' },
+      { name:'Lady Daliah', respawn:18*60*60, nextSpawn:'12:25 PM' },
+      { name:'Venatus', respawn:10*60*60, nextSpawn:'11:13 PM' }, 
+      { name:'Viorent', respawn:10*60*60, nextSpawn:'11:15 PM' },
+      { name:'Ego', respawn:21*60*60, nextSpawn:'10:49 AM' },
+      { name:'Thymele', special:true, schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
+      { name:'Araneo', respawn:24*60*60, nextSpawn:'08:15 AM' },
+      { name:'Livera', respawn:24*60*60, nextSpawn:'11:30 AM' },
+      { name:'Clemantis', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+      { name:'Saphirus', special:true, schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+      { name:'Neutro', special:true, schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+      { name:'General Aquleus', respawn:29*60*60, nextSpawn:'02:00 AM' },
+      { name:'Amentis', respawn:29*60*60, nextSpawn:'03:00 AM' },
+      { name:'Baron Braudmore', respawn:32*60*60, nextSpawn:'05:00 AM' },
+      { name:'Milavy', special:true, schedule:[{day:6,hour:15,minute:0}] },
+      { name:'Wannitas', respawn:48*60*60, nextSpawn:'07:00 AM' },
+      { name:'Metus', respawn:48*60*60, nextSpawn:'08:00 AM' },
+      { name:'Duplican', respawn:48*60*60, nextSpawn:'09:00 AM' },
+      { name:'Shuliar', respawn:35*60*60, nextSpawn:'10:00 AM' },
+      { name:'Ringor', special:true, schedule:[{day:6,hour:17,minute:0}] },
+      { name:'Roderick', special:true, schedule:[{day:5,hour:19,minute:0}] },
+      { name:'Gareth', respawn:32*60*60, nextSpawn:'11:00 AM' },
+      { name:'Titore', respawn:37*60*60, nextSpawn:'01:00 PM' },
+      { name:'Larba', respawn:35*60*60, nextSpawn:'02:00 PM' },
+      { name:'Catena', respawn:35*60*60, nextSpawn:'03:00 PM' },
+      { name:'Auraq', special:true, schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
+    ];
 
+    function nameToId(name){ return name.toLowerCase().replace(/\s+/g,'-'); }
 
-    function nameToId(name){
-      return name.toLowerCase().replace(/\s+/g,'-');
-    }
     function formatTime(ms){
       if(ms<=0) return "SPAWNED!";
       let s=Math.floor(ms/1000);
@@ -124,11 +122,13 @@
       const m=Math.floor(s/60); s%=60;
       return (d>0?d+"d ":"")+(h>0?h+"h ":"")+(m>0?m+"m ":"")+s+"s";
     }
+
     function formatDateTime(dt){
       if(!(dt instanceof Date)) return '';
       const opts = { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
       return dt.toLocaleString('en-US', opts) + " (PH)";
     }
+
     function getNextScheduled(schedule, now){
       let soonest=null;
       for(let s of schedule){
