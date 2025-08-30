@@ -65,15 +65,22 @@
       margin-bottom: 8px;
       color: #00ffcc;
     }
-    .timer.alert {
-      color: #ff4444;
-    }
     .timer.spawned {
       color: #00ff00;
+    }
+    .timer.alert {
+      animation: flash 1s infinite;
+      font-weight: bold;
     }
     .next-time {
       font-size: 0.9rem;
       color: #aaa;
+    }
+
+    @keyframes flash {
+      0% { color: #ff4444; }
+      50% { color: #ffffff; }
+      100% { color: #ff4444; }
     }
   </style>
 </head>
@@ -84,34 +91,33 @@
 
   <script>
     const bosses = [
-  { name:'Undomiel', intervals:[24], lastKilled:'2025-08-30 12:05 AM' },
-  { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-30 12:25 PM' },
-  { name:'Venatus', intervals:[10], lastKilled:'2025-08-30 11:13 PM' },
-  { name:'Viorent', intervals:[10], lastKilled:'2025-08-30 11:15 PM' },
-  { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
-  { name:'Thymele', intervals:[10,24], lastKilled:'2025-08-30 11:30 AM' },
-  { name:'Araneo', intervals:[24], lastKilled:'2025-08-30 11:06 PM' },
-  { name:'Livera', intervals:[24], lastKilled:'2025-08-30 11:16 PM' },
-  { name:'Clemantis', intervals:[10,24], lastKilled:'2025-08-30 11:30 AM' },
-  { name:'Saphirus', intervals:[10,24], lastKilled:'2025-08-30 05:00 PM' },
-  { name:'Neutro', intervals:[10,24], lastKilled:'2025-08-30 07:00 PM' },
-  { name:'General Aquleus', intervals:[29], lastKilled:'2025-08-30 02:00 AM' },
-  { name:'Amentis', intervals:[29], lastKilled:'2025-08-30 03:00 AM' },
-  { name:'Baron Braudmore', intervals:[32], lastKilled:'2025-08-30 05:00 AM' },
-  { name:'Milavy', intervals:[10], lastKilled:'2025-08-30 03:00 PM' },
-  { name:'Wannitas', intervals:[48], lastKilled:'2025-08-30 07:00 AM' },
-  { name:'Metus', intervals:[48], lastKilled:'2025-08-30 08:00 AM' },
-  { name:'Duplican', intervals:[48], lastKilled:'2025-08-30 09:00 AM' },
-  { name:'Shuliar', intervals:[35], lastKilled:'2025-08-30 10:00 AM' },
-  { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 05:00 PM' },
-  { name:'Roderick', intervals:[10], lastKilled:'2025-08-30 07:00 PM' },
-  { name:'Gareth', intervals:[32], lastKilled:'2025-08-30 11:00 AM' },
-  { name:'Titore', intervals:[37], lastKilled:'2025-08-30 01:00 PM' },
-  { name:'Larba', intervals:[35], lastKilled:'2025-08-30 02:00 PM' },
-  { name:'Catena', intervals:[35], lastKilled:'2025-08-30 03:00 PM' },
-  { name:'Auraq', intervals:[10,24], lastKilled:'2025-08-30 09:00 PM' }
-];
-
+      { name:'Undomiel', intervals:[24], lastKilled:'2025-08-30 12:05 AM' },
+      { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-30 12:25 PM' },
+      { name:'Venatus', intervals:[10], lastKilled:'2025-08-30 11:13 PM' },
+      { name:'Viorent', intervals:[10], lastKilled:'2025-08-30 11:15 PM' },
+      { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
+      { name:'Thymele', intervals:[10,24], lastKilled:'2025-08-30 11:30 AM' },
+      { name:'Araneo', intervals:[24], lastKilled:'2025-08-30 11:06 PM' },
+      { name:'Livera', intervals:[24], lastKilled:'2025-08-30 11:16 PM' },
+      { name:'Clemantis', intervals:[10,24], lastKilled:'2025-08-30 11:30 AM' },
+      { name:'Saphirus', intervals:[10,24], lastKilled:'2025-08-30 05:00 PM' },
+      { name:'Neutro', intervals:[10,24], lastKilled:'2025-08-30 07:00 PM' },
+      { name:'General Aquleus', intervals:[29], lastKilled:'2025-08-30 02:00 AM' },
+      { name:'Amentis', intervals:[29], lastKilled:'2025-08-30 03:00 AM' },
+      { name:'Baron Braudmore', intervals:[32], lastKilled:'2025-08-30 05:00 AM' },
+      { name:'Milavy', intervals:[10], lastKilled:'2025-08-30 03:00 PM' },
+      { name:'Wannitas', intervals:[48], lastKilled:'2025-08-30 07:00 AM' },
+      { name:'Metus', intervals:[48], lastKilled:'2025-08-30 08:00 AM' },
+      { name:'Duplican', intervals:[48], lastKilled:'2025-08-30 09:00 AM' },
+      { name:'Shuliar', intervals:[35], lastKilled:'2025-08-30 10:00 AM' },
+      { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 05:00 PM' },
+      { name:'Roderick', intervals:[10], lastKilled:'2025-08-30 07:00 PM' },
+      { name:'Gareth', intervals:[32], lastKilled:'2025-08-30 11:00 AM' },
+      { name:'Titore', intervals:[37], lastKilled:'2025-08-30 01:00 PM' },
+      { name:'Larba', intervals:[35], lastKilled:'2025-08-30 02:00 PM' },
+      { name:'Catena', intervals:[35], lastKilled:'2025-08-30 03:00 PM' },
+      { name:'Auraq', intervals:[10,24], lastKilled:'2025-08-30 09:00 PM' }
+    ];
 
     function nameToId(name){ return name.toLowerCase().replace(/\s+/g,'-'); }
 
@@ -146,24 +152,48 @@
 
     function updateTimers(){
       const now = new Date();
-      // sort bosses by next spawn first
-      bosses.forEach(b => { b.nextSpawn = computeNextSpawn(b.lastKilled, b.intervals); });
-      bosses.sort((a,b)=>a.nextSpawn - b.nextSpawn);
 
-      let soonestBoss = bosses[0];
+      // Compute next spawn for all bosses
+      bosses.forEach(b => {
+        b.nextSpawn = computeNextSpawn(b.lastKilled, b.intervals);
+      });
+
+      // Sort bosses by nearest nextSpawn
+      bosses.sort((a,b) => a.nextSpawn - b.nextSpawn);
+
+      // Rebuild the grid in sorted order
+      const grid = document.getElementById('boss-grid');
+      grid.innerHTML = ''; // clear existing cards
+
+      let soonestBoss = bosses[0]; // boss with nearest next spawn
 
       bosses.forEach(b => {
         const id = nameToId(b.name);
-        document.getElementById(`timer-${id}`).textContent = formatTime(b.nextSpawn - now);
-        document.getElementById(`next-${id}`).textContent = "Next: " + formatDateTime(b.nextSpawn);
+        const remaining = b.nextSpawn - now;
+        const card = document.createElement('div');
+        card.className = 'boss';
+        card.id = `card-${id}`;
+        card.innerHTML = `
+          <h2>${b.name}</h2>
+          <div id="timer-${id}" class="timer">${formatTime(remaining)}</div>
+          <div id="next-${id}" class="next-time">Next: ${formatDateTime(b.nextSpawn)}</div>
+        `;
+        if(b === soonestBoss) card.classList.add('highlight');
+        grid.appendChild(card);
+
+        // Timer flashing for less than 10 mins
+        const timerEl = card.querySelector(`#timer-${id}`);
+        if(remaining <= 0){
+          timerEl.classList.add('spawned');
+        } else if(remaining <= 10*60*1000){
+          timerEl.classList.add('alert');
+        }
       });
 
+      // Update next banner
       if(soonestBoss){
         document.getElementById('next-banner').textContent = 
           `Next Boss: ${soonestBoss.name} at ${formatDateTime(soonestBoss.nextSpawn)}`;
-        document.querySelectorAll('.boss').forEach(c=>c.classList.remove('highlight'));
-        const highlightCard=document.getElementById(`card-${nameToId(soonestBoss.name)}`);
-        if(highlightCard) highlightCard.classList.add('highlight');
       }
     }
 
