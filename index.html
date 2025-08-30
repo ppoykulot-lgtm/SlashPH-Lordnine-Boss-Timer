@@ -36,14 +36,31 @@
       padding: 20px;
     }
     .boss {
-      background: #1f1f1f;
+      position: relative;
+      overflow: hidden;
       border-radius: 15px;
       padding: 15px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.6);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       transition: transform 0.3s, box-shadow 0.3s;
+      background-color: #1f1f1f;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: right center;
+      min-height: 150px;
+    }
+    .boss::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(to right, rgba(31,31,31,0.95) 60%, rgba(31,31,31,0.6));
+      z-index: 1;
+    }
+    .boss-content {
+      position: relative;
+      z-index: 2;
     }
     .boss:hover {
       transform: translateY(-5px);
@@ -51,14 +68,7 @@
     }
     .boss.highlight {
       border: 2px solid #00ffcc;
-      background: #262626;
-    }
-    .boss img {
-      width: 100%;
-      max-height: 150px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      background-color: #262626;
     }
     .boss h2 {
       font-family: 'Cinzel', serif;
@@ -83,7 +93,6 @@
       font-size: 0.9rem;
       color: #aaa;
     }
-
     @keyframes flash {
       0% { color: #ff4444; }
       50% { color: #ffffff; }
@@ -160,12 +169,15 @@
     function updateTimers(){
       const now = new Date();
 
+      // Compute next spawn for all bosses
       bosses.forEach(b => {
         b.nextSpawn = computeNextSpawn(b.lastKilled, b.intervals);
       });
 
+      // Sort bosses by nearest nextSpawn
       bosses.sort((a,b) => a.nextSpawn - b.nextSpawn);
 
+      // Rebuild the grid
       const grid = document.getElementById('boss-grid');
       grid.innerHTML = '';
 
@@ -177,11 +189,13 @@
         const card = document.createElement('div');
         card.className = 'boss';
         card.id = `card-${id}`;
+        card.style.backgroundImage = `url('${id}.png')`; // background image
         card.innerHTML = `
-          <img src="${id}.png" alt="${b.name}">
-          <h2>${b.name}</h2>
-          <div id="timer-${id}" class="timer">${formatTime(remaining)}</div>
-          <div id="next-${id}" class="next-time">Next: ${formatDateTime(b.nextSpawn)}</div>
+          <div class="boss-content">
+            <h2>${b.name}</h2>
+            <div id="timer-${id}" class="timer">${formatTime(remaining)}</div>
+            <div id="next-${id}" class="next-time">Next: ${formatDateTime(b.nextSpawn)}</div>
+          </div>
         `;
         if(b === soonestBoss) card.classList.add('highlight');
         grid.appendChild(card);
@@ -207,11 +221,13 @@
         const card=document.createElement('div');
         card.className='boss';
         card.id=`card-${id}`;
+        card.style.backgroundImage = `url('${id}.png')`; 
         card.innerHTML=`
-          <img src="${id}.png" alt="${b.name}">
-          <h2>${b.name}</h2>
-          <div id="timer-${id}" class="timer">Loading...</div>
-          <div id="next-${id}" class="next-time">Next: Calculating...</div>
+          <div class="boss-content">
+            <h2>${b.name}</h2>
+            <div id="timer-${id}" class="timer">Loading...</div>
+            <div id="next-${id}" class="next-time">Next: Calculating...</div>
+          </div>
         `;
         grid.appendChild(card);
       });
