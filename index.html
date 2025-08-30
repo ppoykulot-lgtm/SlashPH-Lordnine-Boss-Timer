@@ -6,68 +6,161 @@
 <title>SlashPH Lordnine Boss Timers</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
+/* ---------- Global Styles ---------- */
 body {
-  background:#0b0c0f;
-  margin:0;
-  padding:0;
-  font-family:'Cinzel',serif;
-  color:#d4af37;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  background: radial-gradient(circle at top, #0f0f12, #080809);
+  margin: 0;
+  padding: 0;
+  font-family: 'Cinzel', serif;
+  color: #d4af37;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
-header { text-align:center; margin:40px 0 10px; }
+
+/* ---------- Header ---------- */
+header {
+  text-align: center;
+  margin: 40px 0 20px;
+}
 header h1 {
-  font-size:42px; color:#d4af37;
-  text-transform:uppercase; letter-spacing:2px;
-  margin:0; text-shadow:0 0 8px #d4af37;
-  animation:glow 2s ease-in-out infinite alternate;
+  font-size: 46px;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin: 0;
+  text-shadow: 0 0 12px rgba(255,215,0,.6), 0 0 20px rgba(255,215,0,.4);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+header h2 {
+  font-size: 20px;
+  color: #c9a34e;
+  letter-spacing: 4px;
+  margin-top: 8px;
+  font-weight: normal;
 }
 @keyframes glow {
-  from { text-shadow:0 0 8px #d4af37; }
-  to { text-shadow:0 0 20px #ffd700; }
+  from { text-shadow: 0 0 8px #d4af37; }
+  to { text-shadow: 0 0 20px #ffd700, 0 0 40px #b8860b; }
 }
-header h2 { font-size:20px; color:#c9a34e; letter-spacing:3px; margin-top:5px; font-weight:normal; }
+
+/* ---------- Next Boss Banner ---------- */
 #next-banner {
-  font-size:22px; color:#ffd700; margin:10px 0 20px;
-  text-transform:uppercase; text-shadow:0 0 10px #ffd700;
-  animation:glow 1.5s ease-in-out infinite alternate;
+  font-size: 20px;
+  background: rgba(255,215,0,0.1);
+  color: #ffd700;
+  padding: 10px 20px;
+  margin: 15px 0 30px;
+  border-radius: 12px;
+  border: 1px solid #ffd700;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px #ffd700;
+  animation: glow 1.5s ease-in-out infinite alternate;
 }
+
+/* ---------- Boss Container ---------- */
 .boss-container {
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:20px; width:95%; max-width:1200px; padding:20px; box-sizing:border-box;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+  gap: 24px;
+  width: 95%;
+  max-width: 1300px;
+  padding: 20px;
+  box-sizing: border-box;
 }
+
+/* ---------- Boss Card ---------- */
 .boss {
-  background:#111; border:1px solid #333; padding:20px;
-  border-radius:10px; text-align:center; box-shadow:0 0 15px rgba(212,175,55,.3);
-  transition:transform .3s, box-shadow .3s;
+  background: rgba(20, 20, 25, 0.8);
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(212,175,55,.25);
+  backdrop-filter: blur(6px);
+  transition: transform .25s ease, box-shadow .3s ease;
 }
+.boss:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 0 25px rgba(212,175,55,.6);
+}
+
+/* ---------- Highlighting ---------- */
 .boss.highlight { border:2px solid #ffd700; box-shadow:0 0 25px #ffd700; }
-.boss.upcoming { border: 2px dashed #00ffff; box-shadow:0 0 20px #00ffff; }
-.boss.manual { border-color:#00ff7f !important; box-shadow:0 0 25px #00ff7f !important; }
-.boss:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(212,175,55,.6); }
-.boss h3 { margin:0 0 12px; font-size:22px; color:#f4e1b1; }
-.timer { font-family:'Roboto Mono',monospace; font-size:28px; font-weight:700; margin-bottom:10px; color:#fff; }
-.next { font-size:14px; color:#bbb; margin-bottom:12px; }
-.reminder { font-size:12px; color:#888; margin-bottom:10px; }
-.manual-entry { display:flex; justify-content:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
-.manual-entry input[type="time"],
-.manual-entry input[type="datetime-local"] {
-  background:#222; border:1px solid #d4af37; color:#fff; padding:6px 8px;
-  border-radius:6px; font-size:13px; width:120px;
+.boss.upcoming { border:2px dashed #00ffff; box-shadow:0 0 25px #00ffff; }
+.boss.manual   { border:2px solid #00ff7f !important; box-shadow:0 0 25px #00ff7f !important; }
+
+/* ---------- Text Styles ---------- */
+.boss h3 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  color: #f4e1b1;
+  letter-spacing: 1px;
 }
-.controls { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-button { background:none; border:1px solid #d4af37; color:#d4af37; padding:8px 12px; border-radius:8px; font-size:13px; cursor:pointer; transition:.2s, transform .2s; }
-button:hover { background:#d4af37; color:#111; transform:scale(1.05); }
-.spawned { color:#00ff7f; }
-.alert { color:#ff4500; }
-.reset-btn { margin-bottom:15px; }
+.timer {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+}
+.next { font-size: 15px; color: #bbb; margin-bottom: 14px; }
+.reminder { font-size: 12px; color: #888; margin-bottom: 12px; }
+
+/* ---------- Inputs & Controls ---------- */
+.manual-entry {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.manual-entry input {
+  background: #1a1a1d;
+  border: 1px solid #d4af37;
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 130px;
+}
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  background: linear-gradient(145deg, #1a1a1d, #111);
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: .25s ease;
+}
+button:hover {
+  background: linear-gradient(145deg, #ffd700, #c9a34e);
+  color: #111;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 12px rgba(255,215,0,.5);
+}
+.reset-btn { margin-bottom: 15px; }
+
+/* ---------- Status Colors ---------- */
+.spawned { color: #00ff7f; }
+.alert   { color: #ff4500; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>SlashPH Lordnine </h1>
+  <h1>SlashPH Lordnine</h1>
   <h2>BOSS TIMERS</h2>
 </header>
 
@@ -131,7 +224,6 @@ function formatTime(ms){
   return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
 }
 
-// updated getNextScheduled to accept fromTime
 function getNextScheduled(schedule, fromTime=new Date()){
   let soonest=null;
   schedule.forEach(s=>{
@@ -145,7 +237,6 @@ function getNextScheduled(schedule, fromTime=new Date()){
   return soonest;
 }
 
-// ------------------- LOCAL STORAGE -------------------
 function saveTimers() {
   const data = {};
   bosses.forEach(b => {
@@ -163,7 +254,6 @@ function loadTimers() {
     }
   });
 }
-// -----------------------------------------------------
 
 function createUI(){
   const container=document.getElementById('bossContainer');
@@ -309,7 +399,6 @@ function resetAll(){
   updateTimers();
 }
 
-// -------------------- INIT --------------------
 createUI();
 loadTimers();
 updateTimers();
