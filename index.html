@@ -129,7 +129,7 @@
       const ph = dt.toLocaleTimeString([], opts);
       const kr = new Date(dt.getTime() + 60*60*1000).toLocaleTimeString([], opts);
       const dateStr = dt.toLocaleDateString();
-      return `${dateStr} | PH: ${ph} | KR/JP: ${kr}`;
+      return `${dateStr} | PH: ${ph} `;
     }
     function getNextScheduled(schedule, now){
       let soonest=null;
