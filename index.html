@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SlashPH Lordnine Boss Timers</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+body {
+  background:#0b0c0f;
+  margin:0;
+  padding:0;
+  font-family:'Cinzel',serif;
+  color:#d4af37;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+header { text-align:center; margin:40px 0 10px; }
+header h1 {
+  font-size:42px; color:#d4af37;
+  text-transform:uppercase; letter-spacing:2px;
+  margin:0; text-shadow:0 0 8px #d4af37;
+  animation:glow 2s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from { text-shadow:0 0 8px #d4af37; }
+  to { text-shadow:0 0 20px #ffd700; }
+}
+header h2 { font-size:20px; color:#c9a34e; letter-spacing:3px; margin-top:5px; font-weight:normal; }
+#next-banner {
+  font-size:22px; color:#ffd700; margin:10px 0 20px;
+  text-transform:uppercase; text-shadow:0 0 10px #ffd700;
+  animation:glow 1.5s ease-in-out infinite alternate;
+}
+.boss-container {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px; width:95%; max-width:1200px; padding:20px; box-sizing:border-box;
+}
+.boss {
+  background:#111; border:1px solid #333; padding:20px;
+  border-radius:10px; text-align:center; box-shadow:0 0 15px rgba(212,175,55,.3);
+  transition:transform .3s, box-shadow .3s;
+}
+.boss.highlight { border:2px solid #ffd700; box-shadow:0 0 25px #ffd700; }
+.boss.upcoming { border: 2px dashed #00ffff; box-shadow:0 0 20px #00ffff; }
+.boss.manual { border-color:#00ff7f !important; box-shadow:0 0 25px #00ff7f !important; }
+.boss:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(212,175,55,.6); }
+.boss h3 { margin:0 0 12px; font-size:22px; color:#f4e1b1; }
+.timer { font-family:'Roboto Mono',monospace; font-size:28px; font-weight:700; margin-bottom:10px; color:#fff; }
+.next { font-size:14px; color:#bbb; margin-bottom:12px; }
+.reminder { font-size:12px; color:#888; margin-bottom:10px; }
+.manual-entry { display:flex; justify-content:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+.manual-entry input[type="time"],
+.manual-entry input[type="datetime-local"] {
+  background:#222; border:1px solid #d4af37; color:#fff; padding:6px 8px;
+  border-radius:6px; font-size:13px; width:120px;
+}
+.controls { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+button { background:none; border:1px solid #d4af37; color:#d4af37; padding:8px 12px; border-radius:8px; font-size:13px; cursor:pointer; transition:.2s, transform .2s; }
+button:hover { background:#d4af37; color:#111; transform:scale(1.05); }
+.spawned { color:#00ff7f; }
+.alert { color:#ff4500; }
+.reset-btn { margin-bottom:15px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>LORD NINE</h1>
+  <h2>BOSS TIMERS</h2>
+</header>
+
+<div class="reset-btn">
+  <button onclick="resetAll()">Reset All Timers</button>
+</div>
+
+<div id="next-banner">Next Boss: Calculating...</div>
+<div class="boss-container" id="bossContainer"></div>
+
+<script>
+const bosses = [
+  { name:'Undomiel', respawn:24*60*60, nextSpawn:'12:05 AM' },
+  { name:'Lady Daliah', respawn:18*60*60, nextSpawn:'10:03 PM' },
+  { name:'Venatus', respawn:10*60*60 },
+  { name:'Viorent', respawn:10*60*60 },
+  { name:'Ego', respawn:21*60*60, nextSpawn:'10:49 AM' },
+  { name:'Thymele', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+  { name:'Araneo', respawn:24*60*60, nextSpawn:'11:06 PM' },
+  { name:'Livera', respawn:24*60*60, nextSpawn:'11:16 PM' },
+  { name:'Clemantis', special:true, schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+  { name:'Saphirus', special:true, schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+  { name:'Neutro', special:true, schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+  { name:'General Aquleus', respawn:29*60*60 },
+  { name:'Amentis', respawn:29*60*60 },
+  { name:'Baron Braudmore', respawn:32*60*60 },
+  { name:'Milavy', special:true, schedule:[{day:6,hour:15,minute:0}] },
+  { name:'Wannitas', respawn:48*60*60 },
+  { name:'Metus', respawn:48*60*60 },
+  { name:'Duplican', respawn:48*60*60 },
+  { name:'Shuliar', respawn:35*60*60 },
+  { name:'Ringor', special:true, schedule:[{day:6,hour:17,minute:0}] },
+  { name:'Roderick', special:true, schedule:[{day:5,hour:19,minute:0}] },
+  { name:'Gareth', respawn:32*60*60 },
+  { name:'Titore', respawn:37*60*60 },
+  { name:'Larba', respawn:35*60*60 },
+  { name:'Catena', respawn:35*60*60 },
+  { name:'Auraq', special:true, schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
+];
+
+function nameToId(n){ return ('b-' + n.toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')); }
+function getBossById(id){ return bosses.find(b => nameToId(b.name) === id); }
+
+function parseTime(str){
+  const now = new Date();
+  let [time, ampm] = str.split(' ');
+  let [h,m] = time.split(':').map(Number);
+  if(ampm && ampm.toLowerCase()==='pm' && h<12) h+=12;
+  if(ampm && ampm.toLowerCase()==='am' && h===12) h=0;
+  const dt = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+  if(dt < now) dt.setDate(dt.getDate()+1);
+  return dt;
+}
+
+function formatTime(ms){
+  if(ms<=0) return 'SPAWNED!';
+  const s=Math.floor(ms/1000);
+  const h=Math.floor(s/3600);
+  const m=Math.floor((s%3600)/60);
+  const sec=s%60;
+  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+}
+
+// updated getNextScheduled to accept fromTime
+function getNextScheduled(schedule, fromTime=new Date()){
+  let soonest=null;
+  schedule.forEach(s=>{
+    let next=new Date(fromTime);
+    const diffDay=(s.day - fromTime.getDay() + 7)%7;
+    next.setDate(fromTime.getDate()+diffDay);
+    next.setHours(s.hour,s.minute,0,0);
+    if(next<=fromTime) next.setDate(next.getDate()+7);
+    if(!soonest || next < soonest) soonest = next;
+  });
+  return soonest;
+}
+
+// ------------------- LOCAL STORAGE -------------------
+function saveTimers() {
+  const data = {};
+  bosses.forEach(b => {
+    data[nameToId(b.name)] = b.nextSpawn.getTime();
+  });
+  localStorage.setItem('bossTimers', JSON.stringify(data));
+}
+
+function loadTimers() {
+  const data = JSON.parse(localStorage.getItem('bossTimers') || '{}');
+  bosses.forEach(b => {
+    const id = nameToId(b.name);
+    if(data[id]){
+      b.nextSpawn = new Date(data[id]);
+    }
+  });
+}
+// -----------------------------------------------------
+
+function createUI(){
+  const container=document.getElementById('bossContainer');
+  bosses.forEach(b=>{
+    const id=nameToId(b.name);
+    if(b.special && !b.nextSpawn){
+      b.nextSpawn=getNextScheduled(b.schedule);
+    } else if(typeof b.nextSpawn==='string'){
+      b.nextSpawn=parseTime(b.nextSpawn);
+    } else if(!b.nextSpawn){
+      b.nextSpawn=new Date(new Date().getTime()+b.respawn*1000);
+    }
+    const div=document.createElement('div');
+    div.className='boss';
+    div.id=`card-${id}`;
+    div.innerHTML=`
+      <h3>${b.name}</h3>
+      <div class="timer" id="timer-${id}"></div>
+      <div class="next" id="next-${id}"></div>
+      <div class="reminder">Set a kill time or input next spawn</div>
+      <div class="manual-entry">
+        <input type="time" id="killTime-${id}" step="60" aria-label="Kill time for ${b.name}">
+        <input type="datetime-local" id="nextSpawn-${id}" aria-label="Next spawn for ${b.name}">
+      </div>
+      <div class="controls">
+        <button onclick="killedNow('${id}')">Killed Now</button>
+        <button onclick="manualEntry('${id}')">Set Manual Kill Time</button>
+        <button onclick="setNextSpawn('${id}')">Set Next Spawn</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateTimers(){
+  const now=new Date();
+  let soonestBoss=null;
+  const ALERT_THRESHOLD_MINUTES = 30;
+  const threshold = ALERT_THRESHOLD_MINUTES * 60 * 1000;
+
+  bosses.forEach(b=>{
+    let next=b.nextSpawn;
+    let diff=next-now;
+    if(diff<=0 && b.respawn){
+      b.nextSpawn=new Date(now.getTime()+b.respawn*1000);
+      next=b.nextSpawn;
+      diff=next-now;
+    }
+    if(!soonestBoss || next<soonestBoss.nextSpawn) soonestBoss=b;
+
+    const id=nameToId(b.name);
+    const timerEl=document.getElementById(`timer-${id}`);
+    const nextEl=document.getElementById(`next-${id}`);
+    const card=document.getElementById(`card-${id}`);
+
+    if(timerEl && nextEl){
+      timerEl.textContent=formatTime(diff);
+      timerEl.className='timer';
+      if(diff<=0) timerEl.classList.add('spawned');
+      else if(diff<=10*60*1000) timerEl.classList.add('alert');
+      nextEl.textContent=`Next: ${next.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}`;
+    }
+
+    if(card){
+      card.style.order=Math.floor(diff/1000);
+      card.classList.remove('upcoming','manual');
+      if(diff > 0 && diff <= threshold) card.classList.add('upcoming');
+      if(b.manual) card.classList.add('manual');
+    }
+  });
+
+  if(soonestBoss){
+    document.getElementById('next-banner').textContent=`Next Boss: ${soonestBoss.name} at ${soonestBoss.nextSpawn.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}`;
+    document.querySelectorAll('.boss').forEach(c=>c.classList.remove('highlight'));
+    const highlightCard=document.getElementById(`card-${nameToId(soonestBoss.name)}`);
+    if(highlightCard) highlightCard.classList.add('highlight');
+  }
+}
+
+function killedNow(id){
+  const b=getBossById(id);
+  const now=new Date();
+  if(b.special && b.schedule){
+    b.nextSpawn=getNextScheduled(b.schedule, now);
+  } else if(b.respawn){
+    b.nextSpawn=new Date(now.getTime()+b.respawn*1000);
+  }
+  b.manual=false;
+  saveTimers();
+}
+
+function manualEntry(id){
+  const input = document.getElementById(`killTime-${id}`);
+  if(!input || !input.value) return;
+
+  const now = new Date();
+  const [h,m] = input.value.split(':').map(Number);
+  let killTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+  if(killTime > now) killTime.setDate(killTime.getDate() - 1);
+
+  const b = getBossById(id);
+
+  if(b.special && b.schedule){
+    b.nextSpawn = getNextScheduled(b.schedule, killTime);
+  } else if(b.respawn){
+    b.nextSpawn = new Date(killTime.getTime() + b.respawn*1000);
+  } else {
+    b.nextSpawn = new Date(killTime.getTime());
+  }
+
+  b.manual = true;
+  saveTimers();
+}
+
+function setNextSpawn(id){
+  const input = document.getElementById(`nextSpawn-${id}`);
+  if(!input || !input.value) return;
+
+  const next = new Date(input.value);
+  if(isNaN(next.getTime())){
+    alert('Invalid date/time');
+    return;
+  }
+
+  const b = getBossById(id);
+  b.nextSpawn = next;
+  b.manual = true;
+  saveTimers();
+  updateTimers();
+}
+
+function resetAll(){
+  localStorage.removeItem('bossTimers');
+  bosses.forEach(b=>{
+    if(!b.special && b.respawn){
+      b.nextSpawn=new Date(new Date().getTime()+b.respawn*1000);
+      b.manual=false;
+    } else if(b.special && b.schedule){
+      b.nextSpawn=getNextScheduled(b.schedule);
+      b.manual=false;
+    }
+  });
+  updateTimers();
+}
+
+// -------------------- INIT --------------------
+createUI();
+loadTimers();
+updateTimers();
+setInterval(updateTimers, 1000);
+</script>
+
+</body>
+</html>
