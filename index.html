@@ -4,192 +4,247 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SlashPH Lordnine Boss Timers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
       margin: 0;
-      padding: 0;
+      background: linear-gradient(to right, #0f0f0f, #1c1c1c);
+      font-family: 'Roboto Mono', monospace;
+      color: #e4e4e4;
+    }
+    header {
+      padding: 20px;
+      text-align: center;
+      background: #111;
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: #f5f5f5;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #333;
     }
     #next-banner {
-      background: #222;
-      padding: 10px;
       text-align: center;
-      font-size: 1.5em;
+      font-size: 1.3rem;
+      margin: 15px;
+      color: #00ff99;
       font-weight: bold;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
       gap: 15px;
       padding: 20px;
     }
     .boss {
-      background: #333;
-      border-radius: 10px;
-      padding: 15px;
       position: relative;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-      background-size: cover;
-      background-position: center;
-      min-height: 180px;
-      transition: 0.3s;
+      overflow: hidden;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background-color: #1f1f1f;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: right center;
+      min-height: 150px;
+    }
+    .boss::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(to right, rgba(31,31,31,0.95) 60%, rgba(31,31,31,0.6));
+      z-index: 1;
+    }
+    .boss-content {
+      position: relative;
+      z-index: 2;
+    }
+    .boss:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.8);
     }
     .boss.highlight {
-      border: 3px solid gold;
-      transform: scale(1.05);
-    }
-    .boss.noinfo {
-      filter: grayscale(100%) brightness(0.5);
-      opacity: 0.6;
+      border: 2px solid #00ffcc;
+      background-color: #262626;
     }
     .boss h2 {
-      margin: 0 0 10px;
-      font-size: 1.3em;
-      text-shadow: 1px 1px 3px #000;
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #ffcc00;
     }
     .timer {
-      font-size: 1.2em;
+      font-size: 1.4rem;
       font-weight: bold;
+      margin-bottom: 8px;
+      color: #00ffcc;
     }
-    .next-time {
-      font-size: 0.9em;
+    .timer.spawned { color: #00ff00; }
+    .timer.alert { animation: flash 1s infinite; font-weight: bold; }
+    .next-time { font-size: 0.9rem; color: #aaa; }
+    @keyframes flash {
+      0% { color: #ff4444; }
+      50% { color: #ffffff; }
+      100% { color: #ff4444; }
     }
+    /* interval hours badge */
     .interval-badge {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.6);
-      color: #fff;
-      padding: 5px 8px;
-      border-radius: 6px;
-      font-size: 0.8em;
+      top: 8px;
+      right: 12px;
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #ddd;
+      z-index: 3;
     }
   </style>
 </head>
 <body>
-  <div id="next-banner">🔔 Next Boss: NONE</div>
+  <header>SlashPH Lordnine Boss Timers</header>
+  <div id="next-banner">Next Boss: Loading...</div>
   <div class="grid" id="boss-grid"></div>
 
   <script>
     const bosses = [
-      { name: "General Aquleus", interval: 8, lastKilled: null, nextSpawn: null },
-      { name: "Lord Nine", interval: 12, lastKilled: null, nextSpawn: null },
-      { name: "Dragon King", interval: 24, lastKilled: null, nextSpawn: null }
+      { name:'Undomiel', intervals:[24], lastKilled:'2025-08-31 12:06 PM' },
+      { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-31 12:35 PM' },
+      { name:'Venatus', intervals:[10], lastKilled:'2025-08-31 09:18 AM' },
+      { name:'Viorent', intervals:[10], lastKilled:'2025-08-31 09:19 AM' },
+      { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
+      { name:'Araneo', intervals:[24], lastKilled:'2025-08-31 12:05 PM' },
+      { name:'Livera', intervals:[24], lastKilled:'2025-08-31 11:38 AM' },
+      { name:'General Aquleus', intervals:[29], lastKilled:'' },
+      { name:'Amentis', intervals:[29], lastKilled:'' },
+      { name:'Baron Braudmore', intervals:[32], lastKilled:'' },
+      { name:'Wannitas', intervals:[48], lastKilled:'' },
+      { name:'Metus', intervals:[48], lastKilled:'' },
+      { name:'Duplican', intervals:[48], lastKilled:'' },
+      { name:'Shuliar', intervals:[35], lastKilled:'' },
+      { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 05:00 PM' },
+      { name:'Gareth', intervals:[32], lastKilled:'' },
+      { name:'Titore', intervals:[37], lastKilled:'' },
+      { name:'Larba', intervals:[35], lastKilled:'' },
+      { name:'Catena', intervals:[35], lastKilled:'' },
+      { name:'Thymele', schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
+      { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+      { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+      { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+      { name:'Roderick', schedule:[{day:5,hour:19,minute:0}] },
+      { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
+      { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
     ];
 
+    function nameToId(name){ return name.toLowerCase().replace(/\s+/g,'-'); }
+
     function formatTime(ms){
-      if(ms <= 0) return "00:00:00";
-      const total = Math.floor(ms/1000);
-      const h = String(Math.floor(total/3600)).padStart(2,'0');
-      const m = String(Math.floor((total%3600)/60)).padStart(2,'0');
-      const s = String(total%60).padStart(2,'0');
-      return `${h}:${m}:${s}`;
+      if(ms<=0) return "SPAWNED!";
+      let s=Math.floor(ms/1000);
+      const d=Math.floor(s/86400); s%=86400;
+      const h=Math.floor(s/3600); s%=3600;
+      const m=Math.floor(s/60); s%=60;
+      return (d>0?d+"d ":"")+(h>0?h+"h ":"")+(m>0?m+"m ":"")+s+"s";
     }
 
     function formatDateTime(dt){
-      return dt.toLocaleString('en-US',{ weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
+      if(!(dt instanceof Date)) return '';
+      const opts = { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
+      return dt.toLocaleString('en-US', opts) + " (PH)";
     }
 
-    function renderBosses(){
-      const grid = document.getElementById("boss-grid");
-      grid.innerHTML = "";
-      bosses.forEach((b,i)=>{
-        const card = document.createElement("div");
-        card.className = "boss";
-        card.id = "boss-"+i;
-
-        const badge = document.createElement("div");
-        badge.className = "interval-badge";
-        badge.textContent = b.interval+"h";
-        card.appendChild(badge);
-
-        const h2 = document.createElement("h2");
-        h2.textContent = b.name;
-        card.appendChild(h2);
-
-        const timer = document.createElement("div");
-        timer.className = "timer";
-        timer.textContent = "00:00:00";
-        card.appendChild(timer);
-
-        const nextTime = document.createElement("div");
-        nextTime.className = "next-time";
-        nextTime.textContent = "Next: ---";
-        card.appendChild(nextTime);
-
-        grid.appendChild(card);
+    function computeNextSpawn(boss){
+      const now = new Date();
+      if(boss.schedule){
+        let nextSpawns = boss.schedule.map(s=>{
+          let next = new Date(now);
+          next.setHours(s.hour, s.minute, 0, 0);
+          const diff = (s.day - next.getDay() + 7) % 7;
+          if(diff === 0 && next < now) next.setDate(next.getDate() + 7);
+          else next.setDate(next.getDate() + diff);
+          return next;
+        });
+        nextSpawns.sort((a,b)=>a-b);
+        return nextSpawns[0];
+      }
+      let last = new Date(boss.lastKilled || 0);
+      if(isNaN(last)) last = new Date(now);
+      let nextSpawns = boss.intervals.map(h=>{
+        let next = new Date(last.getTime() + h*3600*1000);
+        while(next < now) next = new Date(next.getTime() + h*3600*1000);
+        return next;
       });
+      nextSpawns.sort((a,b)=>a-b);
+      return nextSpawns[0];
     }
 
     function updateTimers(){
       const now = new Date();
-      bosses.forEach((b,i)=>{
-        const card = document.getElementById("boss-"+i);
-        const timerEl = card.querySelector(".timer");
-        const nextEl = card.querySelector(".next-time");
+      bosses.forEach(b => { b.nextSpawn = computeNextSpawn(b); });
+      bosses.sort((a,b)=>a.nextSpawn - b.nextSpawn);
 
-        let timerText="", nextText="";
+      const grid = document.getElementById('boss-grid');
+      grid.innerHTML = '';
 
-        if(b.nextSpawn === null){
-          timerText = "NO INFO";
-          nextText = "Next: NO INFO";
-          card.classList.add("noinfo");
-        } else {
-          const remaining = b.nextSpawn - now;
-          timerText = formatTime(remaining);
-          nextText = "Next: " + formatDateTime(b.nextSpawn);
+      const soonestBoss = bosses[0];
 
-          // alisin "noinfo" kapag may bagong spawn info
-          if(card.classList.contains("noinfo")){
-            card.classList.remove("noinfo");
-          }
+      bosses.forEach(b => {
+        const id = nameToId(b.name);
+        const remaining = b.nextSpawn - now;
+        const hoursLabel = b.intervals ? b.intervals.join("/")+"h" : "Fixed";
+        const card = document.createElement('div');
+        card.className = 'boss';
+        card.id = `card-${id}`;
+        card.style.backgroundImage = `url('${id}.png')`;
+        card.innerHTML = `
+          <div class="interval-badge">${hoursLabel}</div>
+          <div class="boss-content">
+            <h2>${b.name}</h2>
+            <div id="timer-${id}" class="timer">${formatTime(remaining)}</div>
+            <div id="next-${id}" class="next-time">Next: ${formatDateTime(b.nextSpawn)}</div>
+          </div>
+        `;
+        if(b === soonestBoss) card.classList.add('highlight');
+        grid.appendChild(card);
 
-          if(remaining < 0){
-            timerEl.style.color = "lime";
-            timerText = "SPAWNED!";
-          } else if(remaining < 10*60*1000){
-            timerEl.style.color = "red";
-          } else {
-            timerEl.style.color = "white";
-          }
-        }
-
-        timerEl.textContent = timerText;
-        nextEl.textContent = nextText;
+        const timerEl = card.querySelector(`#timer-${id}`);
+        if(remaining <= 0) timerEl.classList.add('spawned');
+        else if(remaining <= 10*60*1000) timerEl.classList.add('alert');
       });
 
-      // Highlight pinakamalapit
-      const valid = bosses.filter(b=>b.nextSpawn!==null);
-      if(valid.length > 0){
-        valid.sort((a,b)=>a.nextSpawn - b.nextSpawn);
-        const nextBoss = valid[0];
-        document.getElementById("next-banner").textContent =
-          "🔔 Next Boss: " + nextBoss.name + " — " + formatDateTime(nextBoss.nextSpawn);
-
-        bosses.forEach((b,i)=>{
-          const card = document.getElementById("boss-"+i);
-          if(b === nextBoss) card.classList.add("highlight");
-          else card.classList.remove("highlight");
-        });
-      } else {
-        document.getElementById("next-banner").textContent = "🔔 Next Boss: NONE";
-        bosses.forEach((b,i)=>{
-          document.getElementById("boss-"+i).classList.remove("highlight");
-        });
+      if(soonestBoss){
+        document.getElementById('next-banner').textContent = 
+          `Next Boss: ${soonestBoss.name} at ${formatDateTime(soonestBoss.nextSpawn)}`;
       }
     }
 
-    renderBosses();
+    buildGrid();
     setInterval(updateTimers, 1000);
+    updateTimers();
 
-    // 🔧 Sample spawn data para makita agad ang effect
-    setTimeout(()=>{
-      bosses[0].nextSpawn = new Date(Date.now() + 30*60*1000); // 30 min
-      bosses[1].nextSpawn = new Date(Date.now() + 2*60*60*1000); // 2h
-      bosses[2].nextSpawn = null; // NO INFO (gray)
-    },1000);
+    function buildGrid(){
+      const grid=document.getElementById('boss-grid');
+      bosses.forEach(b=>{
+        const id=nameToId(b.name);
+        const hoursLabel = b.intervals ? b.intervals.join("/")+"h" : "Fixed";
+        const card=document.createElement('div');
+        card.className='boss';
+        card.id=`card-${id}`;
+        card.style.backgroundImage = `url('${id}.png')`;
+        card.innerHTML=`
+          <div class="interval-badge">${hoursLabel}</div>
+          <div class="boss-content">
+            <h2>${b.name}</h2>
+            <div id="timer-${id}" class="timer">Loading...</div>
+            <div id="next-${id}" class="next-time">Next: Calculating...</div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
   </script>
 </body>
 </html>
