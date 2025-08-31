@@ -107,36 +107,37 @@
 
   <script>
     const bosses = [
-      // Interval-based bosses (lastKilled updated)
-      { name:'Undomiel', intervals:[24], lastKilled:'2025-08-30 00:05' },
-      { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-31 00:34' },
-      { name:'Venatus', intervals:[10], lastKilled:'2025-08-31 09:18' },
-      { name:'Viorent', intervals:[10], lastKilled:'2025-08-31 09:19' },
-      { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49' },
-      { name:'Araneo', intervals:[24], lastKilled:'2025-08-31 00:05' },
-      { name:'Livera', intervals:[24], lastKilled:'2025-08-31 11:38' },
-      { name:'General Aquleus', intervals:[29], lastKilled:'2025-08-30 17:27' },
-      { name:'Amentis', intervals:[29], lastKilled:'2025-08-30 03:00' },
-      { name:'Baron Braudmore', intervals:[32], lastKilled:'2025-08-30 17:27' },
-      { name:'Wannitas', intervals:[48], lastKilled:'2025-08-30 07:00' },
-      { name:'Metus', intervals:[48], lastKilled:'2025-08-30 08:00' },
-      { name:'Duplican', intervals:[48], lastKilled:'2025-08-30 09:00' },
-      { name:'Shuliar', intervals:[35], lastKilled:'2025-08-30 10:00' },
-      { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 17:00' },
-      { name:'Gareth', intervals:[32], lastKilled:'2025-08-30 11:00' },
-      { name:'Titore', intervals:[37], lastKilled:'2025-08-30 13:00' },
-      { name:'Larba', intervals:[35], lastKilled:'2025-08-30 14:00' },
-      { name:'Catena', intervals:[35], lastKilled:'2025-08-30 15:00' },
+  // Interval-based bosses
+  { name:'Undomiel', intervals:[24], lastKilled:'2025-08-30 12:05 AM' },
+  { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-31 12:35 PM' },
+  { name:'Venatus', intervals:[10], lastKilled:'2025-08-31 09:18 AM' },
+  { name:'Viorent', intervals:[10], lastKilled:'2025-08-31 09:19 AM' },
+  { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
+  { name:'Araneo', intervals:[24], lastKilled:'2025-08-31 12:05 AM' },
+  { name:'Livera', intervals:[24], lastKilled:'2025-08-31 11:38 AM' },
+  { name:'General Aquleus', intervals:[29], lastKilled:'2025-08-30 5:27 PM' },
+  { name:'Amentis', intervals:[29], lastKilled:'2025-08-30 03:00 AM' },
+  { name:'Baron Braudmore', intervals:[32], lastKilled:'2025-08-30 5:27 PM' },
+  { name:'Wannitas', intervals:[48], lastKilled:'2025-08-30 07:00 AM' },
+  { name:'Metus', intervals:[48], lastKilled:'2025-08-30 08:00 AM' },
+  { name:'Duplican', intervals:[48], lastKilled:'2025-08-30 09:00 AM' },
+  { name:'Shuliar', intervals:[35], lastKilled:'2025-08-30 10:00 AM' },
+  { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 05:00 PM' },
+  { name:'Gareth', intervals:[32], lastKilled:'2025-08-30 11:00 AM' },
+  { name:'Titore', intervals:[37], lastKilled:'2025-08-30 01:00 PM' },
+  { name:'Larba', intervals:[35], lastKilled:'2025-08-30 02:00 PM' },
+  { name:'Catena', intervals:[35], lastKilled:'2025-08-30 03:00 PM' },
 
-      // Fixed weekday/time bosses
-      { name:'Thymele', schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
-      { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
-      { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
-      { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
-      { name: 'Roderick', schedule: [{day:5, hour:19, minute:0}] },
-      { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
-      { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
-    ];
+  // Fixed weekday/time bosses
+  { name:'Thymele', schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
+  { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+  { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+  { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+  { name: 'Roderick', schedule: [{day:5, hour:19, minute:0}] },
+  { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
+  { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
+];
+
 
     function nameToId(name){ return name.toLowerCase().replace(/\s+/g,'-'); }
 
@@ -157,6 +158,8 @@
 
     function computeNextSpawn(boss){
       const now = new Date();
+
+      // If boss has fixed schedule
       if(boss.schedule){
         let nextSpawns = boss.schedule.map(s=>{
           let next = new Date(now);
@@ -169,10 +172,14 @@
         nextSpawns.sort((a,b)=>a-b);
         return nextSpawns[0];
       }
+
+      // Interval-based
       let last = new Date(boss.lastKilled);
       let nextSpawns = boss.intervals.map(h=>{
         let next = new Date(last.getTime() + h*3600*1000);
-        while(next < now) next = new Date(next.getTime() + h*3600*1000);
+        while(next < now){
+          next = new Date(next.getTime() + h*3600*1000);
+        }
         return next;
       });
       nextSpawns.sort((a,b)=>a-b);
@@ -181,10 +188,16 @@
 
     function updateTimers(){
       const now = new Date();
-      bosses.forEach(b => b.nextSpawn = computeNextSpawn(b));
+
+      bosses.forEach(b => {
+        b.nextSpawn = computeNextSpawn(b);
+      });
+
       bosses.sort((a,b) => a.nextSpawn - b.nextSpawn);
+
       const grid = document.getElementById('boss-grid');
       grid.innerHTML = '';
+
       let soonestBoss = bosses[0];
 
       bosses.forEach(b => {
@@ -205,8 +218,11 @@
         grid.appendChild(card);
 
         const timerEl = card.querySelector(`#timer-${id}`);
-        if(remaining <= 0) timerEl.classList.add('spawned');
-        else if(remaining <= 10*60*1000) timerEl.classList.add('alert');
+        if(remaining <= 0){
+          timerEl.classList.add('spawned');
+        } else if(remaining <= 10*60*1000){
+          timerEl.classList.add('alert');
+        }
       });
 
       if(soonestBoss){
