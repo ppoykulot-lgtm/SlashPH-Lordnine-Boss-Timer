@@ -107,22 +107,37 @@
 
   <script>
     const bosses = [
-      { name:'Undomiel', intervals:[24], lastKilled:'2025-08-30 12:05 AM' },
-      { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-30 12:25 PM' },
-      { name:'Venatus', intervals:[10], lastKilled:'2025-08-31 09:18 AM' },
-      { name:'Viorent', intervals:[10], lastKilled:'2025-08-31 09:19 AM' },
-      { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
+  // Interval-based bosses
+  { name:'Undomiel', intervals:[24], lastKilled:'2025-08-30 12:05 AM' },
+  { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-30 12:25 PM' },
+  { name:'Venatus', intervals:[10], lastKilled:'2025-08-31 09:18 AM' },
+  { name:'Viorent', intervals:[10], lastKilled:'2025-08-31 09:19 AM' },
+  { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
+  { name:'Araneo', intervals:[24], lastKilled:'2025-08-30 11:06 PM' },
+  { name:'Livera', intervals:[24], lastKilled:'2025-08-30 11:16 PM' },
+  { name:'General Aquleus', intervals:[29], lastKilled:'2025-08-30 02:00 AM' },
+  { name:'Amentis', intervals:[29], lastKilled:'2025-08-30 03:00 AM' },
+  { name:'Baron Braudmore', intervals:[32], lastKilled:'2025-08-30 05:00 AM' },
+  { name:'Wannitas', intervals:[48], lastKilled:'2025-08-30 07:00 AM' },
+  { name:'Metus', intervals:[48], lastKilled:'2025-08-30 08:00 AM' },
+  { name:'Duplican', intervals:[48], lastKilled:'2025-08-30 09:00 AM' },
+  { name:'Shuliar', intervals:[35], lastKilled:'2025-08-30 10:00 AM' },
+  { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 05:00 PM' },
+  { name:'Roderick', intervals:[10], lastKilled:'2025-08-30 07:00 PM' },
+  { name:'Gareth', intervals:[32], lastKilled:'2025-08-30 11:00 AM' },
+  { name:'Titore', intervals:[37], lastKilled:'2025-08-30 01:00 PM' },
+  { name:'Larba', intervals:[35], lastKilled:'2025-08-30 02:00 PM' },
+  { name:'Catena', intervals:[35], lastKilled:'2025-08-30 03:00 PM' },
 
-      // Fixed schedule bosses
-      { name:'Thymele', schedule:[{day:1, hour:19, minute:0},{day:3, hour:11, minute:30}] },
-      { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
-      { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
-      { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
-      { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
-      { name:'Ringor', schedule:[{day:6,hour:17,minute:0}] },
-      { name:'Roderick', schedule:[{day:5,hour:19,minute:0}] },
-      { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
-    ];
+  // Fixed weekday/time bosses
+  { name:'Thymele', schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
+  { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+  { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+  { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+  { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
+  { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
+];
+
 
     function nameToId(name){ return name.toLowerCase().replace(/\s+/g,'-'); }
 
