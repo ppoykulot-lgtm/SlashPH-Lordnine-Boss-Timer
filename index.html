@@ -82,21 +82,26 @@
       margin-bottom: 8px;
       color: #00ffcc;
     }
-    .timer.spawned {
-      color: #00ff00;
-    }
-    .timer.alert {
-      animation: flash 1s infinite;
-      font-weight: bold;
-    }
-    .next-time {
-      font-size: 0.9rem;
-      color: #aaa;
-    }
+    .timer.spawned { color: #00ff00; }
+    .timer.alert { animation: flash 1s infinite; font-weight: bold; }
+    .next-time { font-size: 0.9rem; color: #aaa; }
     @keyframes flash {
       0% { color: #ff4444; }
       50% { color: #ffffff; }
       100% { color: #ff4444; }
+    }
+    /* interval hours badge */
+    .interval-badge {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #ddd;
+      z-index: 3;
     }
   </style>
 </head>
@@ -130,7 +135,7 @@
       { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
       { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
       { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
-      { name: 'Roderick', schedule: [{day:5, hour:19, minute:0}] },
+      { name:'Roderick', schedule:[{day:5,hour:19,minute:0}] },
       { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
       { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
     ];
@@ -154,7 +159,6 @@
 
     function computeNextSpawn(boss){
       const now = new Date();
-      // Fixed schedule
       if(boss.schedule){
         let nextSpawns = boss.schedule.map(s=>{
           let next = new Date(now);
@@ -167,7 +171,6 @@
         nextSpawns.sort((a,b)=>a-b);
         return nextSpawns[0];
       }
-      // Interval-based
       let last = new Date(boss.lastKilled || 0);
       if(isNaN(last)) last = new Date(now);
       let nextSpawns = boss.intervals.map(h=>{
@@ -181,7 +184,6 @@
 
     function updateTimers(){
       const now = new Date();
-
       bosses.forEach(b => { b.nextSpawn = computeNextSpawn(b); });
       bosses.sort((a,b)=>a.nextSpawn - b.nextSpawn);
 
@@ -193,11 +195,13 @@
       bosses.forEach(b => {
         const id = nameToId(b.name);
         const remaining = b.nextSpawn - now;
+        const hoursLabel = b.intervals ? b.intervals.join("/")+"h" : "Fixed";
         const card = document.createElement('div');
         card.className = 'boss';
         card.id = `card-${id}`;
         card.style.backgroundImage = `url('${id}.png')`;
         card.innerHTML = `
+          <div class="interval-badge">${hoursLabel}</div>
           <div class="boss-content">
             <h2>${b.name}</h2>
             <div id="timer-${id}" class="timer">${formatTime(remaining)}</div>
@@ -218,22 +222,29 @@
       }
     }
 
+    buildGrid();
+    setInterval(updateTimers, 1000);
+    updateTimers();
+
     function buildGrid(){
       const grid=document.getElementById('boss-grid');
       bosses.forEach(b=>{
         const id=nameToId(b.name);
+        const hoursLabel = b.intervals ? b.intervals.join("/")+"h" : "Fixed";
         const card=document.createElement('div');
         card.className='boss';
         card.id=`card-${id}`;
         card.style.backgroundImage = `url('${id}.png')`;
-        card.innerHTML=`<div class="boss-content"><h2>${b.name}</h2><div id="timer-${id}" class="timer">Loading...</div><div id="next-${id}" class="next-time">Next: Calculating...</div></div>`;
+        card.innerHTML=`
+          <div class="interval-badge">${hoursLabel}</div>
+          <div class="boss-content">
+            <h2>${b.name}</h2>
+            <div id="timer-${id}" class="timer">Loading...</div>
+            <div id="next-${id}" class="next-time">Next: Calculating...</div>
+          </div>`;
         grid.appendChild(card);
       });
     }
-
-    buildGrid();
-    setInterval(updateTimers, 1000);
-    updateTimers();
   </script>
 </body>
 </html>
