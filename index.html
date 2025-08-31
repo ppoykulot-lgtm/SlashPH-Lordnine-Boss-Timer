@@ -107,37 +107,33 @@
 
   <script>
     const bosses = [
-  // Interval-based bosses
-  { name:'Undomiel', intervals:[24], lastKilled:'2025-08-31 12:06 PM' },
-  { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-31 12:35 PM' },
-  { name:'Venatus', intervals:[10], lastKilled:'2025-08-31 09:18 AM' },
-  { name:'Viorent', intervals:[10], lastKilled:'2025-08-31 09:19 AM' },
-  { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
-  { name:'Araneo', intervals:[24], lastKilled:'2025-08-31 12:05 PM' },
-  { name:'Livera', intervals:[24], lastKilled:'2025-08-31 11:38 AM' },
-  { name:'General Aquleus', intervals:[29], lastKilled:'' },
-  { name:'Amentis', intervals:[29], lastKilled:'' },
-  { name:'Baron Braudmore', intervals:[32], lastKilled:'' },
-  { name:'Wannitas', intervals:[48], lastKilled:'' },
-  { name:'Metus', intervals:[48], lastKilled:'' },
-  { name:'Duplican', intervals:[48], lastKilled:'' },
-  { name:'Shuliar', intervals:[35], lastKilled:'' },
-  { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 05:00 PM' },
-  { name:'Gareth', intervals:[32], lastKilled:'' },
-  { name:'Titore', intervals:[37], lastKilled:'' },
-  { name:'Larba', intervals:[35], lastKilled:'' },
-  { name:'Catena', intervals:[35], lastKilled:'' },
-
-  // Fixed weekday/time bosses
-  { name:'Thymele', schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
-  { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
-  { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
-  { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
-  { name: 'Roderick', schedule: [{day:5, hour:19, minute:0}] },
-  { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
-  { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
-];
-
+      { name:'Undomiel', intervals:[24], lastKilled:'2025-08-31 12:06 PM' },
+      { name:'Lady Daliah', intervals:[18], lastKilled:'2025-08-31 12:35 PM' },
+      { name:'Venatus', intervals:[10], lastKilled:'2025-08-31 09:18 AM' },
+      { name:'Viorent', intervals:[10], lastKilled:'2025-08-31 09:19 AM' },
+      { name:'Ego', intervals:[21], lastKilled:'2025-08-30 10:49 AM' },
+      { name:'Araneo', intervals:[24], lastKilled:'2025-08-31 12:05 PM' },
+      { name:'Livera', intervals:[24], lastKilled:'2025-08-31 11:38 AM' },
+      { name:'General Aquleus', intervals:[29], lastKilled:'' },
+      { name:'Amentis', intervals:[29], lastKilled:'' },
+      { name:'Baron Braudmore', intervals:[32], lastKilled:'' },
+      { name:'Wannitas', intervals:[48], lastKilled:'' },
+      { name:'Metus', intervals:[48], lastKilled:'' },
+      { name:'Duplican', intervals:[48], lastKilled:'' },
+      { name:'Shuliar', intervals:[35], lastKilled:'' },
+      { name:'Ringor', intervals:[10], lastKilled:'2025-08-30 05:00 PM' },
+      { name:'Gareth', intervals:[32], lastKilled:'' },
+      { name:'Titore', intervals:[37], lastKilled:'' },
+      { name:'Larba', intervals:[35], lastKilled:'' },
+      { name:'Catena', intervals:[35], lastKilled:'' },
+      { name:'Thymele', schedule:[{day:1,hour:19,minute:0},{day:3,hour:11,minute:30}] },
+      { name:'Clemantis', schedule:[{day:1,hour:11,minute:30},{day:4,hour:19,minute:0}] },
+      { name:'Saphirus', schedule:[{day:0,hour:17,minute:0},{day:2,hour:11,minute:30}] },
+      { name:'Neutro', schedule:[{day:2,hour:19,minute:0},{day:4,hour:11,minute:30}] },
+      { name: 'Roderick', schedule: [{day:5, hour:19, minute:0}] },
+      { name:'Milavy', schedule:[{day:6,hour:15,minute:0}] },
+      { name:'Auraq', schedule:[{day:0,hour:21,minute:0},{day:3,hour:21,minute:0}] }
+    ];
 
     function nameToId(name){ return name.toLowerCase().replace(/\s+/g,'-'); }
 
@@ -158,8 +154,7 @@
 
     function computeNextSpawn(boss){
       const now = new Date();
-
-      // If boss has fixed schedule
+      // Fixed schedule
       if(boss.schedule){
         let nextSpawns = boss.schedule.map(s=>{
           let next = new Date(now);
@@ -172,14 +167,12 @@
         nextSpawns.sort((a,b)=>a-b);
         return nextSpawns[0];
       }
-
       // Interval-based
-      let last = new Date(boss.lastKilled);
+      let last = new Date(boss.lastKilled || 0);
+      if(isNaN(last)) last = new Date(now);
       let nextSpawns = boss.intervals.map(h=>{
         let next = new Date(last.getTime() + h*3600*1000);
-        while(next < now){
-          next = new Date(next.getTime() + h*3600*1000);
-        }
+        while(next < now) next = new Date(next.getTime() + h*3600*1000);
         return next;
       });
       nextSpawns.sort((a,b)=>a-b);
@@ -189,16 +182,13 @@
     function updateTimers(){
       const now = new Date();
 
-      bosses.forEach(b => {
-        b.nextSpawn = computeNextSpawn(b);
-      });
-
-      bosses.sort((a,b) => a.nextSpawn - b.nextSpawn);
+      bosses.forEach(b => { b.nextSpawn = computeNextSpawn(b); });
+      bosses.sort((a,b)=>a.nextSpawn - b.nextSpawn);
 
       const grid = document.getElementById('boss-grid');
       grid.innerHTML = '';
 
-      let soonestBoss = bosses[0];
+      const soonestBoss = bosses[0];
 
       bosses.forEach(b => {
         const id = nameToId(b.name);
@@ -218,11 +208,8 @@
         grid.appendChild(card);
 
         const timerEl = card.querySelector(`#timer-${id}`);
-        if(remaining <= 0){
-          timerEl.classList.add('spawned');
-        } else if(remaining <= 10*60*1000){
-          timerEl.classList.add('alert');
-        }
+        if(remaining <= 0) timerEl.classList.add('spawned');
+        else if(remaining <= 10*60*1000) timerEl.classList.add('alert');
       });
 
       if(soonestBoss){
@@ -239,13 +226,7 @@
         card.className='boss';
         card.id=`card-${id}`;
         card.style.backgroundImage = `url('${id}.png')`;
-        card.innerHTML=`
-          <div class="boss-content">
-            <h2>${b.name}</h2>
-            <div id="timer-${id}" class="timer">Loading...</div>
-            <div id="next-${id}" class="next-time">Next: Calculating...</div>
-          </div>
-        `;
+        card.innerHTML=`<div class="boss-content"><h2>${b.name}</h2><div id="timer-${id}" class="timer">Loading...</div><div id="next-${id}" class="next-time">Next: Calculating...</div></div>`;
         grid.appendChild(card);
       });
     }
